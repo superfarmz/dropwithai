@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Drop With AI — AI Automation Agency Dubai</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#050505;--black-2:#0a0a0f;--black-3:#0f0f1a;
+  --white:#f0f0ff;--white-dim:rgba(240,240,255,0.55);--white-faint:rgba(240,240,255,0.12);
+  --violet:#7c3aed;--blue:#2563eb;--cyan:#06b6d4;--indigo:#4f46e5;
+  --g1:linear-gradient(135deg,#7c3aed,#2563eb,#06b6d4);
+  --g2:linear-gradient(135deg,#9333ea,#4f46e5);
+  --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+  --mic-r:#ff2d2d;--mic-o:#ff7a00;--mic-y:#ffd000;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;line-height:1.6;cursor:none;}
+
+/* ── CURSOR ── */
+#cursor{width:10px;height:10px;border-radius:50%;background:#fff;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s,height .15s;}
+#cursor-ring{width:38px;height:38px;border-radius:50%;border:1px solid rgba(124,58,237,.55);position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:22px;height:22px;}
+
+/* ── FIXED BG LAYERS ── */
+.bg-noise{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");opacity:.5;}
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.orb-1{width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,.16) 0%,transparent 70%);top:-200px;left:-200px;}
+.orb-2{width:600px;height:600px;background:radial-gradient(circle,rgba(6,182,212,.1) 0%,transparent 70%);top:30%;right:-180px;}
+.orb-3{width:500px;height:500px;background:radial-gradient(circle,rgba(79,70,229,.12) 0%,transparent 70%);bottom:5%;left:20%;}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:1.1rem 5%;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s,backdrop-filter .4s;border-bottom:1px solid transparent;}
+nav.scrolled{background:rgba(5,5,5,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-color:var(--glass-border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-svg{width:32px;height:32px;flex-shrink:0;}
+.logo-text{font-size:1.05rem;font-weight:700;letter-spacing:-.02em;color:var(--white);}
+.logo-text span{background:linear-gradient(90deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:2.2rem;list-style:none;}
+.nav-links a{text-decoration:none;font-size:.82rem;font-weight:400;color:var(--white-dim);transition:color .2s;letter-spacing:.01em;}
+.nav-links a:hover{color:var(--white);}
+.nav-cta{background:linear-gradient(135deg,#ff2d2d,#ff7a00,#ffd000);color:#050505;padding:.55rem 1.4rem;border-radius:100px;font-size:.82rem;font-weight:700;text-decoration:none;cursor:none;transition:opacity .2s,transform .2s;letter-spacing:.01em;}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px);}
+
+/* ══════════════════════════════════════════
+   APPLE-STYLE PARALLAX ARCHITECTURE
+   Each section is a "scene" — content inside
+   transforms as user scrolls through it.
+══════════════════════════════════════════ */
+
+/* ── HERO PARALLAX SCENE ── */
+.hero-scene{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:7rem 5% 5rem;overflow:hidden;}
+.hero-bg-layer{position:absolute;inset:0;z-index:0;will-change:transform;}
+.hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(240,240,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(240,240,255,.025) 1px,transparent 1px);background-size:90px 90px;will-change:transform;}
+.hero-content{position:relative;z-index:2;max-width:600px;will-change:transform,opacity;}
+.hero-visual{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:2;will-change:transform,opacity;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;padding:.4rem 1rem;font-size:.72rem;font-weight:500;color:var(--white-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.8rem;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#ff2d2d,#ff7a00);animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.hero h1{font-size:clamp(3rem,5.5vw,5rem);font-weight:700;line-height:1.02;letter-spacing:-.04em;margin-bottom:1.5rem;}
+.grad-text{background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:shimmer 5s ease infinite;}
+.grad-text-fire{background:linear-gradient(135deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+@keyframes shimmer{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.hero-sub{font-size:1rem;font-weight:300;color:var(--white-dim);line-height:1.85;max-width:460px;margin-bottom:2.5rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-fire{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ff2d2d,#ff7a00,#ffd000);color:#050505;padding:.9rem 2rem;border-radius:100px;font-size:.88rem;font-weight:700;text-decoration:none;cursor:none;transition:transform .2s,box-shadow .2s;box-shadow:0 0 30px rgba(255,100,0,.3);}
+.btn-fire:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 0 50px rgba(255,100,0,.5);}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--white);padding:.9rem 2rem;border-radius:100px;font-size:.88rem;font-weight:500;text-decoration:none;border:1px solid var(--glass-border);cursor:none;transition:border-color .2s,background .2s;}
+.btn-ghost:hover{border-color:rgba(255,122,0,.5);background:rgba(255,122,0,.06);}
+
+/* MIC DROP SVG */
+.mic-wrap{width:340px;height:440px;position:relative;display:flex;align-items:center;justify-content:center;}
+.mic-glow{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,100,0,.22) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%);animation:mglow 3s ease-in-out infinite;}
+@keyframes mglow{0%,100%{transform:translate(-50%,-55%) scale(1);opacity:.8;}50%{transform:translate(-50%,-50%) scale(1.3);opacity:.4;}}
+.mic-anim{animation:micFloat 3.5s ease-in-out infinite;}
+@keyframes micFloat{0%,100%{transform:rotate(-28deg) translateY(0);}50%{transform:rotate(-28deg) translateY(-18px);}}
+.float-chip{position:absolute;background:rgba(10,10,15,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);border-radius:10px;padding:.7rem .95rem;font-size:.74rem;}
+.chip-1{top:12%;right:-10px;animation:cf1 4s ease-in-out infinite;}
+.chip-2{bottom:18%;left:-15px;animation:cf2 4s ease-in-out infinite .6s;}
+@keyframes cf1{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes cf2{0%,100%{transform:translateY(0);}50%{transform:translateY(10px);}}
+.chip-label{font-size:.62rem;color:var(--white-dim);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.25rem;}
+.chip-val{font-weight:600;background:linear-gradient(90deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ── STICKY SCROLL SECTIONS (Apple product page style) ── */
+.sticky-scene{position:relative;z-index:1;}
+
+/* ── MARQUEE ── */
+.marquee-wrap{overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);padding:.9rem 0;background:var(--black-2);position:relative;z-index:1;}
+.marquee-inner{display:flex;width:max-content;animation:marquee 24s linear infinite;}
+.marquee-item{font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--white-dim);padding:0 2.2rem;white-space:nowrap;}
+.marquee-item span{color:transparent;background:linear-gradient(90deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;background-clip:text;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── SECTION CORE ── */
+section{position:relative;z-index:1;padding:8rem 5%;}
+.s-eye{font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;display:block;margin-bottom:1rem;background:linear-gradient(90deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s-title{font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:700;letter-spacing:-.035em;line-height:1.05;margin-bottom:1.2rem;}
+.s-sub{font-size:1rem;color:var(--white-dim);font-weight:300;line-height:1.85;max-width:520px;}
+.text-center{text-align:center;}.text-center .s-sub{margin:0 auto;}
+
+/* ── SERVICES ── */
+.services-bg{background:var(--black);}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--glass-border);border:1px solid var(--glass-border);margin-top:4rem;border-radius:20px;overflow:hidden;}
+.svc-card{background:var(--black-2);padding:2.4rem 2rem;transition:background .3s;cursor:none;position:relative;overflow:hidden;}
+.svc-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,45,45,.05),rgba(255,208,0,.03));opacity:0;transition:opacity .3s;}
+.svc-card:hover{background:rgba(15,15,26,.9);}
+.svc-card:hover::after{opacity:1;}
+.svc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.3rem;background:rgba(255,122,0,.1);border:1px solid rgba(255,122,0,.15);}
+.svc-card h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;letter-spacing:-.01em;}
+.svc-card p{font-size:.86rem;color:var(--white-dim);font-weight:300;line-height:1.75;}
+.svc-arrow{display:inline-block;margin-top:.9rem;font-size:.78rem;font-weight:500;opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s;background:linear-gradient(90deg,#ff2d2d,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.svc-card:hover .svc-arrow{opacity:1;transform:translateX(0);}
+
+/* ── APPLE STICKY FEATURE PANELS ── */
+.feature-sticky-wrap{position:relative;}
+.feature-panel{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:5rem;padding:8rem 5%;border-bottom:1px solid var(--glass-border);position:relative;z-index:1;}
+.feature-panel:nth-child(even) .feat-text{order:2;}
+.feature-panel:nth-child(even) .feat-visual{order:1;}
+.feat-text{}
+.feat-tag{display:inline-block;font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--white-dim);border:1px solid var(--glass-border);border-radius:100px;padding:.3rem .9rem;margin-bottom:1.2rem;}
+.feat-text h2{font-size:clamp(2rem,3.5vw,3rem);font-weight:700;letter-spacing:-.035em;line-height:1.1;margin-bottom:1rem;}
+.feat-text p{font-size:.97rem;color:var(--white-dim);font-weight:300;line-height:1.85;margin-bottom:1.5rem;}
+.feat-bullets{list-style:none;display:flex;flex-direction:column;gap:.7rem;}
+.feat-bullets li{font-size:.88rem;color:var(--white-dim);display:flex;gap:.8rem;align-items:flex-start;}
+.feat-bullets li::before{content:'→';color:#ff7a00;flex-shrink:0;font-weight:600;}
+.feat-visual{display:flex;align-items:center;justify-content:center;}
+
+/* feature UI mockups */
+.mockup-card{background:rgba(10,10,20,.9);border:1px solid var(--glass-border);border-radius:18px;overflow:hidden;width:100%;max-width:420px;backdrop-filter:blur(20px);}
+.mockup-bar{background:rgba(255,255,255,.04);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--glass-border);}
+.dot-r{width:10px;height:10px;border-radius:50%;background:#ff5f57;}
+.dot-y{width:10px;height:10px;border-radius:50%;background:#ffbd2e;}
+.dot-g{width:10px;height:10px;border-radius:50%;background:#28c840;}
+.mockup-url{flex:1;background:rgba(255,255,255,.05);border-radius:100px;padding:.2rem .8rem;font-size:.65rem;color:var(--white-dim);text-align:center;}
+.mockup-body{padding:1.4rem;}
+.chat-bubble-in,.chat-bubble-out{padding:.55rem .85rem;border-radius:10px;font-size:.76rem;line-height:1.55;margin:.35rem 0;max-width:88%;}
+.chat-bubble-in{background:rgba(255,255,255,.07);align-self:flex-start;color:var(--white);}
+.chat-bubble-out{background:linear-gradient(135deg,rgba(255,45,45,.35),rgba(255,122,0,.3));align-self:flex-end;margin-left:auto;color:var(--white);}
+.chat-col{display:flex;flex-direction:column;}
+.wf-row{display:flex;align-items:center;gap:.7rem;padding:.45rem .5rem;border-radius:8px;font-size:.74rem;color:var(--white-dim);margin:.2rem 0;background:rgba(255,255,255,.03);border:1px solid var(--glass-border);}
+.wf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--glass-border);font-size:.78rem;}
+.stat-row:last-child{border:none;}
+.stat-k{color:var(--white-dim);}
+.stat-v{font-weight:600;background:linear-gradient(90deg,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ── PROCESS ── */
+.process-bg{background:var(--black-3);}
+.process-timeline{display:flex;flex-direction:column;gap:0;max-width:700px;margin:4rem auto 0;}
+.proc-item{display:grid;grid-template-columns:60px 1fr;gap:1.5rem;padding:2rem 0;border-bottom:1px solid var(--glass-border);align-items:start;}
+.proc-item:first-child{border-top:1px solid var(--glass-border);}
+.proc-num{font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(180deg,#ff2d2d,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.proc-item h3{font-size:1rem;font-weight:600;margin-bottom:.4rem;}
+.proc-item p{font-size:.87rem;color:var(--white-dim);font-weight:300;line-height:1.75;}
+
+/* ── STATS ── */
+.stats-band{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);position:relative;z-index:1;}
+.stat-cell{padding:3.5rem 2rem;border-right:1px solid var(--glass-border);text-align:center;}
+.stat-cell:last-child{border-right:none;}
+.stat-num{font-size:clamp(2.8rem,4vw,4rem);font-weight:700;letter-spacing:-.05em;line-height:1;background:linear-gradient(135deg,#ff2d2d,#ff7a00,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;margin-bottom:.4rem;}
+.stat-lbl{font-size:.8rem;color:var(--white-dim);font-weight:300;letter-spacing:.02em;}
+
+/* ── TESTIMONIALS ── */
+.test-bg{background:var(--black-2);}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem;}
+.test-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;padding:2rem;backdrop-filter:blur(20px);transition:transform .35s,box-shadow .35s;cursor:none;will-change:transform;}
+.test-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 24px 60px rgba(0,0,0,.35);}
+.stars{font-size:.88rem;letter-spacing:.1em;margin-bottom:1rem;background:linear-gradient(90deg,#ff2d2d,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.test-card blockquote{font-size:.9rem;color:var(--white-dim);font-weight:300;line-height:1.82;margin-bottom:1.5rem;font-style:italic;}
+.test-author{display:flex;align-items:center;gap:.8rem;}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0;}
+.av-1{background:linear-gradient(135deg,#ff2d2d,#ff7a00);}
+.av-2{background:linear-gradient(135deg,#ff7a00,#ffd000);}
+.av-3{background:linear-gradient(135deg,#ff2d2d,#ffd000);}
+.au-name{font-size:.88rem;font-weight:600;}
+.au-role{font-size:.74rem;color:var(--white-dim);}
+
+/* ── CTA ── */
+.cta-scene{text-align:center;padding:10rem 5%;position:relative;overflow:hidden;}
+.cta-bg-mic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28rem;opacity:.03;pointer-events:none;animation:ctamic 8s ease-in-out infinite;will-change:transform;}
+@keyframes ctamic{0%,100%{transform:translate(-50%,-50%) rotate(-8deg) scale(1);}50%{transform:translate(-50%,-52%) rotate(5deg) scale(1.05);}}
+.cta-scene .s-title{font-size:clamp(3rem,6vw,5.5rem);margin:0 auto 1.2rem;}
+.cta-scene .s-sub{margin:0 auto 3rem;}
+.glow-fire-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#ff2d2d,#ff7a00,#ffd000);color:#050505;padding:1.15rem 3.2rem;border-radius:100px;font-size:1rem;font-weight:700;text-decoration:none;cursor:none;transition:transform .2s,box-shadow .2s;box-shadow:0 0 40px rgba(255,100,0,.4),0 0 80px rgba(255,45,45,.15);background-size:200%;animation:shimmer 4s ease infinite;}
+.glow-fire-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 60px rgba(255,100,0,.6),0 0 100px rgba(255,45,45,.25);}
+.contact-line{margin-top:1.4rem;font-size:.85rem;color:var(--white-dim);}
+.contact-line a{background:linear-gradient(90deg,#ff2d2d,#ffd000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;font-weight:600;}
+
+/* ── FOOTER ── */
+footer{padding:2.8rem 5%;border-top:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;position:relative;z-index:1;}
+.footer-left{display:flex;flex-direction:column;gap:.8rem;}
+.footer-links{display:flex;gap:2rem;flex-wrap:wrap;}
+.footer-links a{font-size:.82rem;color:var(--white-dim);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--white);}
+footer p{font-size:.75rem;color:rgba(240,240,255,.25);}
+.social-row{display:flex;gap:.8rem;}
+.soc{width:34px;height:34px;border-radius:50%;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--white-dim);text-decoration:none;transition:border-color .2s,box-shadow .2s;}
+.soc:hover{border-color:rgba(255,122,0,.5);box-shadow:0 0 12px rgba(255,100,0,.3);}
+
+/* ══ PARALLAX UTILITY CLASSES (set by JS) ══ */
+.parallax-slow{will-change:transform;}
+.parallax-med{will-change:transform;}
+.parallax-fast{will-change:transform;}
+.apple-fade{opacity:0;transform:translateY(40px) scale(.98);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1);}
+.apple-fade.visible{opacity:1;transform:translateY(0) scale(1);}
+.apple-fade-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.apple-fade-left.visible{opacity:1;transform:translateX(0);}
+.apple-fade-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.apple-fade-right.visible{opacity:1;transform:translateX(0);}
+.d1{transition-delay:.05s;}.d2{transition-delay:.12s;}.d3{transition-delay:.2s;}.d4{transition-delay:.28s;}.d5{transition-delay:.38s;}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .hero-visual{display:none;}
+  .services-grid,.test-grid{grid-template-columns:1fr;}
+  .stats-band{grid-template-columns:1fr 1fr;}
+  .stat-cell:nth-child(2){border-right:none;}
+  .feature-panel{grid-template-columns:1fr;}
+  .feature-panel:nth-child(even) .feat-text,.feature-panel:nth-child(even) .feat-visual{order:unset;}
+  footer{flex-direction:column;gap:1rem;}
+  .nav-links{display:none;}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none !important;transition-duration:.01ms !important;}}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- FIXED BG -->
+<div class="bg-noise"></div>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#">
+    <svg class="logo-svg" viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ff2d2d"/>
+          <stop offset="50%" stop-color="#ff7a00"/>
+          <stop offset="100%" stop-color="#ffd000"/>
+        </linearGradient>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ff7a00" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#ffd000" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- mic capsule -->
+      <rect x="14" y="2" width="20" height="28" rx="10" fill="url(#mg)" transform="rotate(-22,24,16)"/>
+      <!-- grille lines -->
+      <line x1="16" y1="11" x2="32" y2="6" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="15" y1="16" x2="33" y2="11" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="16" y1="21" x2="32" y2="16" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+      <!-- handle -->
+      <rect x="19" y="28" width="10" height="18" rx="4" fill="url(#mg)" opacity=".85" transform="rotate(-22,24,37)"/>
+      <!-- base -->
+      <ellipse cx="20" cy="46" rx="8" ry="4" fill="#ffd000" opacity=".7"/>
+      <!-- motion trails -->
+      <rect x="18" y="49" width="3" height="10" rx="1.5" fill="url(#tg)"/>
+      <rect x="13" y="51" width="2" height="7" rx="1" fill="url(#tg)" opacity=".6"/>
+      <rect x="23" y="52" width="2" height="6" rx="1" fill="url(#tg)" opacity=".5"/>
+    </svg>
+    <span class="logo-text">Drop With <span>AI</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#features">Work</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:origin@dropwithai.com" class="nav-cta">Let's Build →</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero-scene">
+  <div class="hero-grid-lines parallax-slow" id="heroGrid"></div>
+  <div class="hero-content">
+    <div class="hero-badge apple-fade">
+      <span class="badge-dot"></span>
+      AI Agents &nbsp;·&nbsp; Automation &nbsp;·&nbsp; Workflows
+    </div>
+    <h1 class="apple-fade d1">
+      Build AI Systems<br/>
+      That Leave<br/>
+      <span class="grad-text-fire">Competitors</span><br/>
+      <span class="grad-text">Speechless.</span>
+    </h1>
+    <p class="hero-sub apple-fade d2">We craft intelligent AI agents, automations, and workflows that replace repetitive work — so Dubai businesses scale without scaling headcount.</p>
+    <div class="hero-btns apple-fade d3">
+      <a href="mailto:origin@dropwithai.com" class="btn-fire">Book a Call</a>
+      <a href="#features" class="btn-ghost">View Our Work →</a>
+    </div>
+  </div>
+  <div class="hero-visual parallax-med" id="heroVis">
+    <div class="mic-wrap">
+      <div class="mic-glow"></div>
+      <div class="mic-anim">
+        <svg width="200" height="260" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="micGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff2d2d"/>
+              <stop offset="50%" stop-color="#ff7a00"/>
+              <stop offset="100%" stop-color="#ffd000"/>
+            </linearGradient>
+            <linearGradient id="trailG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff7a00" stop-opacity=".9"/>
+              <stop offset="100%" stop-color="#ffd000" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="glowf"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- motion trails -->
+          <rect x="93" y="195" width="6" height="55" rx="3" fill="url(#trailG)" opacity=".9"/>
+          <rect x="84" y="205" width="4" height="42" rx="2" fill="url(#trailG)" opacity=".55"/>
+          <rect x="104" y="208" width="3.5" height="38" rx="1.8" fill="url(#trailG)" opacity=".45"/>
+          <rect x="113" y="215" width="2.5" height="28" rx="1.2" fill="url(#trailG)" opacity=".3"/>
+          <!-- mic capsule -->
+          <rect x="72" y="40" width="56" height="80" rx="28" fill="url(#micGrad)" filter="url(#glowf)"/>
+          <!-- grille -->
+          <line x1="82" y1="66" x2="118" y2="66" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="79" y1="78" x2="121" y2="78" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="82" y1="90" x2="118" y2="90" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>
+          <!-- handle -->
+          <rect x="88" y="118" width="24" height="70" rx="8" fill="url(#micGrad)" opacity=".88"/>
+          <!-- base ring -->
+          <rect x="82" y="184" width="36" height="12" rx="6" fill="#ffd000" opacity=".75"/>
+          <!-- glow halo -->
+          <ellipse cx="100" cy="118" rx="44" ry="60" fill="rgba(255,100,0,.08)"/>
+        </svg>
+      </div>
+      <div class="float-chip chip-1">
+        <div class="chip-label">Response time</div>
+        <div class="chip-val">⚡ Under 2 seconds</div>
+      </div>
+      <div class="float-chip chip-2">
+        <div class="chip-label">Automations live</div>
+        <div class="chip-val">✦ 50+ workflows</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span class="marquee-item">AI Agents <span>✦</span></span>
+    <span class="marquee-item">WhatsApp Automation <span>✦</span></span>
+    <span class="marquee-item">n8n Workflows <span>✦</span></span>
+    <span class="marquee-item">Voice AI <span>✦</span></span>
+    <span class="marquee-item">RAG Systems <span>✦</span></span>
+    <span class="marquee-item">Odoo Integration <span>✦</span></span>
+    <span class="marquee-item">Dubai Based <span>✦</span></span>
+    <span class="marquee-item">OpenAI Powered <span>✦</span></span>
+    <span class="marquee-item">24 / 7 Uptime <span>✦</span></span>
+    <span class="marquee-item">Any Language <span>✦</span></span>
+    <span class="marquee-item">AI Agents <span>✦</span></span>
+    <span class="marquee-item">WhatsApp Automation <span>✦</span></span>
+    <span class="marquee-item">n8n Workflows <span>✦</span></span>
+    <span class="marquee-item">Voice AI <span>✦</span></span>
+    <span class="marquee-item">RAG Systems <span>✦</span></span>
+    <span class="marquee-item">Odoo Integration <span>✦</span></span>
+    <span class="marquee-item">Dubai Based <span>✦</span></span>
+    <span class="marquee-item">OpenAI Powered <span>✦</span></span>
+    <span class="marquee-item">24 / 7 Uptime <span>✦</span></span>
+    <span class="marquee-item">Any Language <span>✦</span></span>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section id="services" class="services-bg">
+  <span class="s-eye apple-fade">What We Build</span>
+  <h2 class="s-title apple-fade d1">AI for every layer<br/>of your business</h2>
+  <div class="services-grid">
+    <div class="svc-card apple-fade d1"><div class="svc-icon">🤖</div><h3>AI Agents</h3><p>Autonomous AI employees handling tasks end-to-end — research, response, routing, follow-up — without human touch.</p><div class="svc-arrow">Explore →</div></div>
+    <div class="svc-card apple-fade d2"><div class="svc-icon">⚡</div><h3>Workflow Automation</h3><p>n8n, Make, and custom API integrations eliminating manual work between your CRM, ERP, email, and sheets.</p><div class="svc-arrow">Explore →</div></div>
+    <div class="svc-card apple-fade d3"><div class="svc-icon">🎙️</div><h3>Voice AI</h3><p>Human-like phone agents handling inbound calls, qualifying leads, and booking appointments in any language.</p><div class="svc-arrow">Explore →</div></div>
+    <div class="svc-card apple-fade d2"><div class="svc-icon">💬</div><h3>WhatsApp AI</h3><p>24/7 AI assistants on WhatsApp Business API — instant replies, booking flows, concierge automation, multilingual.</p><div class="svc-arrow">Explore →</div></div>
+    <div class="svc-card apple-fade d3"><div class="svc-icon">🛠️</div><h3>Internal Tools</h3><p>Custom dashboards, AI copilots, and internal automation systems making your team dramatically more efficient.</p><div class="svc-arrow">Explore →</div></div>
+    <div class="svc-card apple-fade d4"><div class="svc-icon">🧠</div><h3>RAG & Knowledge Systems</h3><p>Private GPTs trained on your documentation and data — so your team always has the right answer, instantly.</p><div class="svc-arrow">Explore →</div></div>
+  </div>
+</section>
+
+<!-- ═══ FEATURE PANELS (Apple sticky product-page style) ═══ -->
+<div class="feature-sticky-wrap" id="features">
+
+  <!-- Panel 1 -->
+  <div class="feature-panel">
+    <div class="feat-text apple-fade-left">
+      <span class="feat-tag">WhatsApp AI</span>
+      <h2>Your business replies<br/><span class="grad-text-fire">while you sleep.</span></h2>
+      <p>Every customer message gets an instant, intelligent response — in their language, in your voice. The AI qualifies, books, and logs. Your team only steps in for what matters.</p>
+      <ul class="feat-bullets">
+        <li>Instant replies under 2 seconds, 24 / 7</li>
+        <li>Booking intake with automatic Google Sheet log</li>
+        <li>Multilingual — detects and responds in any language</li>
+        <li>Human handoff with full context on complex queries</li>
+      </ul>
+    </div>
+    <div class="feat-visual apple-fade-right">
+      <div class="mockup-card">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="mockup-url">whatsapp ai concierge</div></div>
+        <div class="mockup-body chat-col">
+          <div class="chat-bubble-in">What's my hotel address for night 3?</div>
+          <div class="chat-bubble-out">Hi Ahmed 👋 Night 3 is Raffles Istanbul, Zorlu Center. Check-in 3pm. Driver Ali arrives 2:45pm. 🏨</div>
+          <div class="chat-bubble-in">Can I change to a sea view room?</div>
+          <div class="chat-bubble-out">Flagging to your consultant now — you'll hear back within 2 hours. ✨</div>
+          <div class="chat-bubble-in">Perfect, thanks!</div>
+          <div class="chat-bubble-out">Anytime! Your full itinerary is always here if you need anything else. 🌟</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 2 -->
+  <div class="feature-panel">
+    <div class="feat-text apple-fade-right">
+      <span class="feat-tag">Workflow Automation</span>
+      <h2>Eliminate the work<br/><span class="grad-text">between the work.</span></h2>
+      <p>Your team shouldn't be copying data between tools. We wire your entire stack together — Odoo, Google Sheets, WhatsApp, email, CRM — so information flows automatically.</p>
+      <ul class="feat-bullets">
+        <li>Odoo, HubSpot, Salesforce, Airtable integrations</li>
+        <li>Trigger-based automation on any event</li>
+        <li>Error handling and fallback logic built in</li>
+        <li>Full audit trail — nothing moves silently</li>
+      </ul>
+    </div>
+    <div class="feat-visual apple-fade-left">
+      <div class="mockup-card">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="mockup-url">n8n workflow</div></div>
+        <div class="mockup-body">
+          <div class="wf-row"><div class="wf-dot" style="background:#ff2d2d"></div>Webhook — inbound WhatsApp message</div>
+          <div class="wf-row"><div class="wf-dot" style="background:#ff7a00"></div>Odoo lookup — match customer by phone</div>
+          <div class="wf-row"><div class="wf-dot" style="background:#ffd000"></div>Fetch booking — hotel, driver, itinerary</div>
+          <div class="wf-row"><div class="wf-dot" style="background:#ff7a00"></div>OpenAI — generate personalised reply</div>
+          <div class="wf-row"><div class="wf-dot" style="background:#ff2d2d"></div>Router — answer directly or escalate</div>
+          <div class="wf-row"><div class="wf-dot" style="background:#ffd000"></div>WhatsApp API — send response</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 3 -->
+  <div class="feature-panel">
+    <div class="feat-text apple-fade-left">
+      <span class="feat-tag">Analytics & Visibility</span>
+      <h2>See everything.<br/><span class="grad-text-fire">Control everything.</span></h2>
+      <p>Owners get complete visibility into every automated conversation, escalation, and booking. No more guessing what your team said — or didn't say — to a customer.</p>
+      <ul class="feat-bullets">
+        <li>Real-time dashboard on automation performance</li>
+        <li>Every conversation logged and searchable</li>
+        <li>Escalation alerts the moment a human is needed</li>
+        <li>Monthly reports on hours saved and bookings handled</li>
+      </ul>
+    </div>
+    <div class="feat-visual apple-fade-right">
+      <div class="mockup-card">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="mockup-url">automation dashboard</div></div>
+        <div class="mockup-body">
+          <div class="stat-row"><span class="stat-k">Messages handled by AI</span><span class="stat-v">94.2%</span></div>
+          <div class="stat-row"><span class="stat-k">Avg. response time</span><span class="stat-v">1.4 sec</span></div>
+          <div class="stat-row"><span class="stat-k">Human escalations</span><span class="stat-v">5.8%</span></div>
+          <div class="stat-row"><span class="stat-k">Hours saved / month</span><span class="stat-v">180+</span></div>
+          <div class="stat-row"><span class="stat-k">Customer satisfaction</span><span class="stat-v">4.9 / 5</span></div>
+          <div class="stat-row"><span class="stat-k">Bookings auto-logged</span><span class="stat-v">100%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ STATS ═══ -->
+<div class="stats-band">
+  <div class="stat-cell apple-fade d1"><div class="stat-num" data-target="500" data-suffix="+">0</div><div class="stat-lbl">Hours Saved for Clients</div></div>
+  <div class="stat-cell apple-fade d2"><div class="stat-num" data-target="50" data-suffix="+">0</div><div class="stat-lbl">Automations Built</div></div>
+  <div class="stat-cell apple-fade d3"><div class="stat-num" data-target="99.9" data-suffix="%">0</div><div class="stat-lbl">System Reliability</div></div>
+  <div class="stat-cell apple-fade d4"><div class="stat-num" data-target="24" data-suffix="/7">0</div><div class="stat-lbl">AI Availability</div></div>
+</div>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="process" class="process-bg">
+  <div class="text-center">
+    <span class="s-eye apple-fade">How We Work</span>
+    <h2 class="s-title apple-fade d1">From first call<br/>to systems running<br/>in your sleep</h2>
+    <p class="s-sub apple-fade d2">Every system architected from scratch around your specific processes, data, and goals — not templates.</p>
+  </div>
+  <div class="process-timeline">
+    <div class="proc-item apple-fade d1"><div class="proc-num">01</div><div><h3>Discover</h3><p>Deep-dive into your workflows, bottlenecks, and business goals to identify the highest-ROI automation opportunities.</p></div></div>
+    <div class="proc-item apple-fade d2"><div class="proc-num">02</div><div><h3>Architect</h3><p>Design the full system logic — data flows, decision trees, escalation paths, and integration points — before a single line of code.</p></div></div>
+    <div class="proc-item apple-fade d3"><div class="proc-num">03</div><div><h3>Build</h3><p>Develop and test AI agents, automations, and integrations with rigorous quality checks at every milestone.</p></div></div>
+    <div class="proc-item apple-fade d4"><div class="proc-num">04</div><div><h3>Deploy</h3><p>Go live with full monitoring, fallback logic, and human handoff points so nothing ever breaks silently.</p></div></div>
+    <div class="proc-item apple-fade d5"><div class="proc-num">05</div><div><h3>Scale</h3><p>Continuous optimisation, performance reviews, and new automation layers as your business grows.</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="test-bg">
+  <span class="s-eye text-center apple-fade">Client Results</span>
+  <h2 class="s-title text-center apple-fade d1">The mic drop<br/>speaks for itself</h2>
+  <div class="test-grid">
+    <div class="test-card apple-fade d1"><div class="stars">★★★★★</div><blockquote>"Our WhatsApp concierge handles 95% of queries automatically. Luxury clients get instant personalised replies at 2am. It's transformed how we operate."</blockquote><div class="test-author"><div class="av av-1">Y</div><div><div class="au-name">Yusuf A.</div><div class="au-role">CEO, Luxury Travel Agency — Dubai</div></div></div></div>
+    <div class="test-card apple-fade d2"><div class="stars">★★★★★</div><blockquote>"The n8n workflow they built cut our booking processing time from 4 hours to 8 minutes. Our team now focuses on clients, not admin. Game-changing."</blockquote><div class="test-author"><div class="av av-2">M</div><div><div class="au-name">Maria P.</div><div class="au-role">Founder, On-Demand Car Wash — Dubai</div></div></div></div>
+    <div class="test-card apple-fade d3"><div class="stars">★★★★★</div><blockquote>"They understood our Odoo setup on the first call. The AI knows every customer's itinerary and answers like a real concierge. Our guides are free to guide."</blockquote><div class="test-author"><div class="av av-3">R</div><div><div class="au-name">Rania K.</div><div class="au-role">Operations Director, Tour Agency — UAE</div></div></div></div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-scene" id="contact">
+  <div class="cta-bg-mic">🎤</div>
+  <span class="s-eye apple-fade">Ready?</span>
+  <h2 class="s-title apple-fade d1">Ready for Your<br/><span class="grad-text-fire">Mic Drop</span> <span class="grad-text">Moment?</span></h2>
+  <p class="s-sub apple-fade d2">Build AI systems that work while you sleep. Based in Dubai. Built for businesses that mean business.</p>
+  <div class="apple-fade d3">
+    <a href="mailto:origin@dropwithai.com" class="glow-fire-btn">Start Building →</a>
+    <p class="contact-line">or email <a href="mailto:origin@dropwithai.com">origin@dropwithai.com</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <a class="nav-logo" href="#" style="text-decoration:none;">
+      <svg class="logo-svg" viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="mg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff2d2d"/><stop offset="50%" stop-color="#ff7a00"/><stop offset="100%" stop-color="#ffd000"/></linearGradient><linearGradient id="tg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff7a00" stop-opacity=".8"/><stop offset="100%" stop-color="#ffd000" stop-opacity="0"/></linearGradient></defs>
+        <rect x="14" y="2" width="20" height="28" rx="10" fill="url(#mg2)" transform="rotate(-22,24,16)"/>
+        <line x1="16" y1="11" x2="32" y2="6" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="15" y1="16" x2="33" y2="11" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="16" y1="21" x2="32" y2="16" stroke="rgba(255,255,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+        <rect x="19" y="28" width="10" height="18" rx="4" fill="url(#mg2)" opacity=".85" transform="rotate(-22,24,37)"/>
+        <ellipse cx="20" cy="46" rx="8" ry="4" fill="#ffd000" opacity=".7"/>
+        <rect x="18" y="49" width="3" height="10" rx="1.5" fill="url(#tg2)"/>
+        <rect x="13" y="51" width="2" height="7" rx="1" fill="url(#tg2)" opacity=".6"/>
+        <rect x="23" y="52" width="2" height="6" rx="1" fill="url(#tg2)" opacity=".5"/>
+      </svg>
+      <span class="logo-text">Drop With <span>AI</span></span>
+    </a>
+    <p>AI automation agency. Dubai, UAE.<br/>Building intelligent systems for businesses that refuse to stay ordinary.</p>
+  </div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#features">Case Studies</a>
+    <a href="#process">Process</a>
+    <a href="mailto:origin@dropwithai.com">Contact</a>
+  </div>
+  <div>
+    <div class="social-row">
+      <a href="#" class="soc">in</a>
+      <a href="#" class="soc">𝕏</a>
+      <a href="#" class="soc">ig</a>
+    </div>
+    <p style="margin-top:.8rem;">© 2025 Drop With AI</p>
+  </div>
+</footer>
+
+<script>
+/* ═══ CURSOR ═══ */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+
+/* ═══ NAV ═══ */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
+
+/* ═══ PARTICLES ═══ */
+const cv=document.getElementById('particles'),ctx=cv.getContext('2d');
+let W,H;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+resize();window.addEventListener('resize',resize,{passive:true});
+const pts=Array.from({length:55},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4+.3,dx:(Math.random()-.5)*.25,dy:(Math.random()-.5)*.25,c:['rgba(255,45,45,','rgba(255,122,0,','rgba(255,208,0,'][Math.floor(Math.random()*3)],o:Math.random()*.3+.08}));
+(function drawP(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+p.o+')';ctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1;});requestAnimationFrame(drawP);})();
+
+/* ═══ APPLE-STYLE PARALLAX ═══
+   Uses scroll position to drive transform on multiple layers.
+   Different speeds create convincing depth.
+═══════════════════════════════*/
+const heroGrid=document.getElementById('heroGrid');
+const heroVis=document.getElementById('heroVis');
+const orb1=document.querySelector('.orb-1');
+const orb2=document.querySelector('.orb-2');
+const orb3=document.querySelector('.orb-3');
+
+/* Smooth scroll value with lerp */
+let scrollY_smooth=0,scrollY_raw=0;
+window.addEventListener('scroll',()=>{scrollY_raw=window.scrollY;},{passive:true});
+
+function parallaxTick(){
+  scrollY_smooth+=(scrollY_raw-scrollY_smooth)*.08;
+  const s=scrollY_smooth;
+
+  /* Hero grid — moves slower than content (depth layer) */
+  if(heroGrid) heroGrid.style.transform=`translateY(${s*0.35}px)`;
+
+  /* Hero mic visual — moves at different speed + slight rotate */
+  if(heroVis){
+    const vProg=Math.min(s/600,1);
+    heroVis.style.transform=`translateY(${s*0.18}px) scale(${1-vProg*0.08}) rotate(${vProg*-3}deg)`;
+    heroVis.style.opacity=1-vProg*1.2;
+  }
+
+  /* Ambient orbs — slow drift gives huge depth */
+  if(orb1) orb1.style.transform=`translateY(${s*0.12}px) translateX(${s*0.04}px)`;
+  if(orb2) orb2.style.transform=`translateY(${-s*0.08}px) translateX(${-s*0.03}px)`;
+  if(orb3) orb3.style.transform=`translateY(${-s*0.06}px)`;
+
+  requestAnimationFrame(parallaxTick);
+}
+parallaxTick();
+
+/* ═══ FEATURE PANEL PARALLAX ═══
+   Each panel's visuals drift at different rate as you scroll past them
+═══════════════════════════════════*/
+const featVisuals=document.querySelectorAll('.feat-visual');
+const featTexts=document.querySelectorAll('.feat-text');
+
+function featParallax(){
+  featVisuals.forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    const center=rect.top+rect.height/2-innerHeight/2;
+    el.style.transform=`translateY(${center*-0.08}px)`;
+  });
+  requestAnimationFrame(featParallax);
+}
+featParallax();
+
+/* ═══ SCROLL REVEAL ═══ */
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.apple-fade,.apple-fade-left,.apple-fade-right').forEach(el=>revObs.observe(el));
+
+/* ═══ COUNTER ═══ */
+function runCount(el){
+  const t=parseFloat(el.dataset.target),suf=el.dataset.suffix||'',dec=t%1!==0;
+  let s=null;
+  const step=ts=>{
+    if(!s)s=ts;
+    const p=Math.min((ts-s)/2200,1),e=1-Math.pow(1-p,4);
+    el.textContent=(dec?(e*t).toFixed(1):Math.floor(e*t))+suf;
+    if(p<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+const cntObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){runCount(e.target);cntObs.unobserve(e.target);}});
+},{threshold:.5});
+document.querySelectorAll('[data-target]').forEach(el=>cntObs.observe(el));
+
+/* ═══ 3D CARD TILT ═══
+   Apple-style tilt on service cards and test cards
+═══════════════════════*/
+function addTilt(selector){
+  document.querySelectorAll(selector).forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(600px) rotateY(${x*10}deg) rotateX(${-y*8}deg) translateY(-6px) scale(1.02)`;
+      card.style.transition='transform .1s ease';
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform='';
+      card.style.transition='transform .6s cubic-bezier(.16,1,.3,1)';
+    });
+  });
+}
+addTilt('.svc-card');
+addTilt('.test-card');
+addTilt('.mockup-card');
+
+/* ═══ MAGNETIC BUTTONS ═══ */
+document.querySelectorAll('.btn-fire,.btn-ghost,.glow-fire-btn,.nav-cta').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=(e.clientX-r.left-r.width/2)*.25;
+    const y=(e.clientY-r.top-r.height/2)*.25;
+    btn.style.transform=`translate(${x}px,${y}px) translateY(-2px)`;
+    btn.style.transition='transform .15s ease';
+  });
+  btn.addEventListener('mouseleave',()=>{
+    btn.style.transform='';
+    btn.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';
+  });
+});
+
+/* ═══ SCROLL PROGRESS INDICATOR ═══ */
+const prog=document.createElement('div');
+prog.style.cssText='position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#ff2d2d,#ff7a00,#ffd000);z-index:999;transform-origin:left;transform:scaleX(0);transition:transform .1s linear;';
+document.body.appendChild(prog);
+window.addEventListener('scroll',()=>{
+  const max=document.body.scrollHeight-innerHeight;
+  prog.style.transform=`scaleX(${window.scrollY/max})`;
+},{passive:true});
+</script>
+</body>
+</html>
